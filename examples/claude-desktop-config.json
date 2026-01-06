@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "node",
+      "args": ["/Users/coreyobiri/obsidian-mcp-enterprise/dist/cli.js"],
+      "env": {
+        "LOG_LEVEL": "info",
+        "OBSIDIAN_VAULT_PATH": "/Users/coreyobiri/Documents/COre.2.1.1"
+      }
+    }
+  }
+}
+
+
