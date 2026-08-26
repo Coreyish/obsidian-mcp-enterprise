@@ -1,0 +1,9 @@
+{
+  "_comment": "Example MCP client config pointing at the server running over Streamable HTTP. Start it with: ./obsidian-mcp-enterprise --transport http --http-addr :8080",
+  "mcpServers": {
+    "obsidian": {
+      "type": "streamable-http",
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}

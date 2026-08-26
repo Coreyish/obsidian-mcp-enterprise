@@ -1,0 +1,39 @@
+{
+  "manifest_version": "0.3",
+  "name": "obsidian-mcp-enterprise",
+  "version": "0.2.0",
+  "description": "Enterprise-grade MCP server for Obsidian vaults: read, write, search, and manage notes.",
+  "author": {
+    "name": "Coreyish"
+  },
+  "server": {
+    "type": "binary",
+    "entry_point": "server/obsidian-mcp-enterprise",
+    "mcp_config": {
+      "command": "${__dirname}/server/obsidian-mcp-enterprise",
+      "args": ["--transport", "stdio"],
+      "env": {
+        "OBSIDIAN_VAULT_PATH": "${user_config.vault_path}"
+      }
+    }
+  },
+  "user_config": {
+    "vault_path": {
+      "type": "directory",
+      "title": "Obsidian vault",
+      "description": "Path to your Obsidian vault (the folder that contains the .obsidian directory).",
+      "required": true
+    }
+  },
+  "tools": [
+    { "name": "read_note", "description": "Read a note's content, frontmatter, and tags." },
+    { "name": "write_note", "description": "Create or overwrite a note." },
+    { "name": "list_notes", "description": "List notes, optionally within a directory." },
+    { "name": "search_notes", "description": "Search by filename, title, tags, and content." },
+    { "name": "get_note_metadata", "description": "Get metadata and tags for a note." },
+    { "name": "update_note", "description": "Update a note, preserving frontmatter by default." },
+    { "name": "append_to_note", "description": "Append content to an existing note." },
+    { "name": "delete_note", "description": "Delete a note from the vault." },
+    { "name": "get_vault_stats", "description": "Vault-wide stats: count, size, recent activity." }
+  ]
+}
