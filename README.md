@@ -1,89 +1,112 @@
-# Obsidian MCP Enterprise
+# Obsidian MCP Enterprise (Go)
 
-> ⚠️ **Work in progress** — this repository is still under active development and is not a complete production-ready project.
+> ⚠️ **Work in progress** — under active development.
 
-A lightweight, **enterprise-grade MCP server** for Obsidian vaults. This project exposes Obsidian notes through the **Model Context Protocol (MCP)** so that LLM agents and other MCP-aware clients can read, write, search, and manage notes. Testing new MCP capability to provide context and "memories" faster !
+A lightweight, **enterprise-grade MCP server** for Obsidian vaults, written in **Go**. It exposes Obsidian notes over the **Model Context Protocol (MCP)** so that LLM agents and other MCP-aware clients can read, write, search, and manage notes — giving an agent fast, structured "memory" backed by your vault.
 
+Ships as a **single static binary** and can serve over either **stdio** (local subprocess) or **Streamable HTTP** (networked).
 
 ---
 
-## Main Features
+## Features
 
-- Exposes an Obsidian vault over **MCP (Model Context Protocol)**
-- Supports common note operations:
+- Exposes an Obsidian vault over **MCP**
+- Two transports, selectable at runtime: **stdio** and **Streamable HTTP**
+- Common note operations:
   - Read / write notes (including frontmatter)
   - List notes and metadata
-  - Search notes by filename, content, and tags
+  - Search by filename, title, tags, and content
   - Append, update, and delete notes
-  - Vault stats (note count, size, recent activity)
-- Designed for **Node.js (>= 18.18)** and TypeScript
+  - Vault stats (note count, total size, recent activity)
+- **Path-traversal protection** — note paths cannot escape the vault root
+- Single dependency-free binary; no runtime to install
 
 ---
 
-## 🚀 Quick Start
+## Requirements
 
-### 1) Install dependencies
+- **Go 1.23+** (only to build; the resulting binary is standalone)
+
+---
+
+## Quick Start
+
+### 1) Build
 
 ```bash
-npm install
+go build -o obsidian-mcp-enterprise .
 ```
 
-### 2) Point to your Obsidian vault
+### 2) Point to your vault
 
-The server will automatically discover a vault in the current working directory, but you can also explicitly set it with an environment variable:
+The server auto-discovers a vault (scanning `~/Documents` and `~/Obsidian` for a
+`.obsidian` folder), or you can set it explicitly:
 
 ```bash
 export OBSIDIAN_VAULT_PATH="/path/to/your/vault"
 ```
 
-### 3) Run in development mode
+### 3) Run
+
+**stdio** (default — for local clients like Claude Desktop / Cursor):
 
 ```bash
-npm run dev
+./obsidian-mcp-enterprise --transport stdio
 ```
 
-### 4) Build and run the compiled server
+**Streamable HTTP** (for networked / hosted use):
 
 ```bash
-npm run build
-npm start
+./obsidian-mcp-enterprise --transport http --http-addr :8080
+# MCP endpoint: http://localhost:8080/mcp
 ```
 
 ---
 
-## 🧰 Exposed MCP Tools
+## Configuration
 
-This server registers the following MCP tools (via `@modelcontextprotocol/sdk`):
+Settings come from flags (which override) and environment variables:
 
-- `read_note` — read note content + frontmatter
+| Flag | Env var | Default | Description |
+|------|---------|---------|-------------|
+| `--transport` | `MCP_TRANSPORT` | `stdio` | `stdio` or `http` |
+| `--http-addr` | `MCP_HTTP_ADDR` | `:8080` | Listen address for HTTP transport |
+| `--vault` | `OBSIDIAN_VAULT_PATH` | auto-discover | Path to the Obsidian vault |
+| — | `MAX_SEARCH_RESULTS` | `50` | Default search result cap |
+| — | `LOG_LEVEL` | `info` | Log verbosity |
+
+---
+
+## Exposed MCP Tools
+
+- `read_note` — read note content + frontmatter + tags
 - `write_note` — create or overwrite a note
 - `list_notes` — list notes (optionally within a directory)
-- `search_notes` — search by filename/content/tags
-- `get_note_metadata` — fetch metadata for a single note
-- `update_note` — update a note, optionally preserving frontmatter
+- `search_notes` — search by filename/title/tags/content
+- `get_note_metadata` — metadata for a single note
+- `update_note` — update a note, preserving frontmatter by default
 - `append_to_note` — append text to an existing note
-- `delete_note` — delete a note from the vault
-- `get_vault_stats` — vault-wide stats (count, size, recent activity)
+- `delete_note` — delete a note
+- `get_vault_stats` — vault-wide stats
 
 ---
 
-## 🧩 Packaging
+## Project Layout
 
-This project is shipped as an npm package and exports a CLI:
-
-- `obsidian-mcp-enterprise` (from `dist/cli.js`)
+```
+main.go                     entrypoint; flag parsing + transport selection
+internal/
+  config/    config.go      env-var configuration
+  vault/     types.go       core structs
+             metadata.go    frontmatter + tag parsing
+             discovery.go   vault auto-discovery
+             operations.go  read/write/list/delete (+ path-traversal guard)
+             search.go      fuzzy filename + substring content search
+  mcpserver/ server.go      MCP tool registration
+```
 
 ---
 
-## 📝 Notes (WIP)
-
-- This project is written in TypeScript and compiled to `dist/`.
-- Ensure `node >= 18.18` is used (required by the MCP SDK that i'm working with).
-- The API tool behavior may change as development continues.
-- Some edge cases, validation, and error handling are still being improved.
-
----
-
-## 📄 License
+## License
 
 MIT

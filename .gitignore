@@ -1,0 +1,14 @@
+# Compiled binary
+/obsidian-mcp-enterprise
+/omcp
+
+# MCPB bundle artifacts (manifest is kept as source under bundle/)
+/*.mcpb
+/bundle/server/
+
+# OS cruft
+.DS_Store
+
+# Go
+*.test
+*.out
