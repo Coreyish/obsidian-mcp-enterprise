@@ -2,7 +2,7 @@
 
 > ⚠️ **Work in progress** — under active development.
 
-A lightweight, **enterprise-grade MCP server** for Obsidian vaults, written in **Go**. It exposes Obsidian notes over the **Model Context Protocol (MCP)** so that LLM agents and other MCP-aware clients can read, write, search, and manage notes — giving an agent fast, structured "memory" backed by your vault.
+A lightweight, **MCP server** for Obsidian vaults, written in **Go**. It exposes Obsidian notes over the **Model Context Protocol (MCP)** so that LLM agents and other MCP-aware clients can read, write, search, and manage notes — giving an agent fast, structured "memory" backed by your vault.
 
 Ships as a **single static binary** and can serve over either **stdio** (local subprocess) or **Streamable HTTP** (networked).
 
