@@ -1,4 +1,4 @@
-# Obsidian MCP Enterprise (Go)
+# Obsidian MCP
 
 > ⚠️ **Work in progress** — under active development.
 
